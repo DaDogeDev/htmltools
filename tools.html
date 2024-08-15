@@ -25,17 +25,10 @@
        .tool button {
             padding: 5px 10px;
         }
-       .color-preview {
-            height: 50px;
-            width: 50px;
-            border: 1px solid #000;
+       .file-info {
             margin-top: 10px;
-        }
-       .image-preview {
-            max-width: 100%;
-            height: auto;
             border: 1px solid #000;
-            margin-top: 10px;
+            padding: 10px;
         }
     </style>
 </head>
@@ -59,11 +52,15 @@
         <div class="color-preview" id="color-preview"></div>
     </div>
 
-    <!-- Image Uploader -->
-    <div class="tool" id="image-uploader">
-        <h2>Image Uploader</h2>
-        <input type="file" id="image-input" accept="image/*" onchange="uploadImage(event)" />
-        <img id="image-preview" class="image-preview" src="" alt="Uploaded image will appear here">
+    <!-- Any File Uploader -->
+    <div class="tool" id="file-uploader">
+        <h2>File Uploader</h2>
+        <input type="file" id="file-input" onchange="handleFileUpload(event)" />
+        <div id="file-info" class="file-info" hidden>
+            <p><strong>File Name:</strong> <span id="file-name"></span></p>
+            <p><strong>File Size:</strong> <span id="file-size"></span> bytes</p>
+            <p><strong>File Type:</strong> <span id="file-type"></span></p>
+        </div>
     </div>
 
     <!-- Base64 Encoder/Decoder -->
@@ -137,16 +134,14 @@
             colorPreview.style.backgroundColor = color;
         }
 
-        // Image Uploader Function
-        function uploadImage(event) {
+        // File Uploader Function
+        function handleFileUpload(event) {
             const file = event.target.files[0];
-            const preview = document.getElementById('image-preview');
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                preview.src = e.target.result;
-            };
             if (file) {
-                reader.readAsDataURL(file);
+                document.getElementById('file-info').hidden = false;
+                document.getElementById('file-name').textContent = file.name;
+                document.getElementById('file-size').textContent = file.size;
+                document.getElementById('file-type').textContent = file.type || 'Unknown';
             }
         }
 
