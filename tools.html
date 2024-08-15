@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Useful HTML Tools</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+       .tool {
+            margin-bottom: 30px;
+        }
+       .tool h2 {
+            margin-bottom: 10px;
+        }
+       .tool input,.tool textarea,.tool select {
+            display: block;
+            margin: 10px 0;
+            padding: 5px;
+            width: 100%;
+            max-width: 300px;
+        }
+       .tool button {
+            padding: 5px 10px;
+        }
+       .color-preview {
+            height: 50px;
+            width: 50px;
+            border: 1px solid #000;
+            margin-top: 10px;
+        }
+       .image-preview {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #000;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Useful HTML Tools</h1>
+
+    <!-- Symbol Encoding/Decoding Tool -->
+    <div class="tool" id="symbol-tool">
+        <h2>Symbol Encoding/Decoding</h2>
+        <textarea id="symbol-input" rows="4" placeholder="Enter text to encode/decode..."></textarea>
+        <button onclick="encodeSymbols()">Encode</button>
+        <button onclick="decodeSymbols()">Decode</button>
+        <textarea id="symbol-output" rows="4" readonly placeholder="Output..."></textarea>
+    </div>
+
+    <!-- Hex/HTML Color Selector -->
+    <div class="tool" id="color-tool">
+        <h2>Hex/HTML Color Selector</h2>
+        <input type="color" id="color-picker" onchange="updateColor()" />
+        <input type="text" id="color-hex" placeholder="#FFFFFF" oninput="updateColorFromHex()" />
+        <div class="color-preview" id="color-preview"></div>
+    </div>
+
+    <!-- Image Uploader -->
+    <div class="tool" id="image-uploader">
+        <h2>Image Uploader</h2>
+        <input type="file" id="image-input" accept="image/*" onchange="uploadImage(event)" />
+        <img id="image-preview" class="image-preview" src="" alt="Uploaded image will appear here">
+    </div>
+
+    <!-- Base64 Encoder/Decoder -->
+    <div class="tool" id="base64-tool">
+        <h2>Base64 Encoder/Decoder</h2>
+        <textarea id="base64-input" rows="4" placeholder="Enter text to encode/decode..."></textarea>
+        <button onclick="encodeBase64()">Encode</button>
+        <button onclick="decodeBase64()">Decode</button>
+        <textarea id="base64-output" rows="4" readonly placeholder="Output..."></textarea>
+    </div>
+
+    <!-- URL Encoder/Decoder -->
+    <div class="tool" id="url-tool">
+        <h2>URL Encoder/Decoder</h2>
+        <textarea id="url-input" rows="4" placeholder="Enter URL to encode/decode..."></textarea>
+        <button onclick="encodeURL()">Encode</button>
+        <button onclick="decodeURL()">Decode</button>
+        <textarea id="url-output" rows="4" readonly placeholder="Output..."></textarea>
+    </div>
+
+    <!-- Cheat Sheet Button -->
+    <div class="tool" id="cheat-sheet-tool">
+        <h2>HTML/CSS Cheat Sheet</h2>
+        <button onclick="openCheatSheet()">Open Cheat Sheet</button>
+    </div>
+
+    <script>
+        // Symbol Encoding/Decoding Functions
+        function htmlEncode(str) {
+            return str.replace(/[^\w\s]/gi, function(match) {
+                return '&#' + match.charCodeAt(0).toString() + ';';
+            });
+        }
+
+        function htmlDecode(str) {
+            return str.replace(/&#(\d+);/g, function(match, code) {
+                return String.fromCharCode(parseInt(code, 10));
+            });
+        }
+
+        function encodeSymbols() {
+            const input = document.getElementById('symbol-input').value;
+            const output = htmlEncode(input);
+            document.getElementById('symbol-output').value = output;
+        }
+
+        function decodeSymbols() {
+            const input = document.getElementById('symbol-input').value;
+            const output = htmlDecode(input);
+            document.getElementById('symbol-output').value = output;
+        }
+
+        // Hex/HTML Color Selector Functions
+        function updateColor() {
+            const colorPicker = document.getElementById('color-picker');
+            const colorHex = document.getElementById('color-hex');
+            const colorPreview = document.getElementById('color-preview');
+
+            const color = colorPicker.value;
+            colorHex.value = color;
+            colorPreview.style.backgroundColor = color;
+        }
+
+        function updateColorFromHex() {
+            const colorHex = document.getElementById('color-hex');
+            const colorPicker = document.getElementById('color-picker');
+            const colorPreview = document.getElementById('color-preview');
+
+            const color = colorHex.value;
+            colorPicker.value = color;
+            colorPreview.style.backgroundColor = color;
+        }
+
+        // Image Uploader Function
+        function uploadImage(event) {
+            const file = event.target.files[0];
+            const preview = document.getElementById('image-preview');
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                preview.src = e.target.result;
+            };
+            if (file) {
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Base64 Encoder/Decoder Functions
+        function encodeBase64() {
+            const input = document.getElementById('base64-input').value;
+            const output = btoa(input);
+            document.getElementById('base64-output').value = output;
+        }
+
+        function decodeBase64() {
+            const input = document.getElementById('base64-input').value;
+            const output = atob(input);
+            document.getElementById('base64-output').value = output;
+        }
+
+        // URL Encoder/Decoder Functions
+        function encodeURL() {
+            const input = document.getElementById('url-input').value;
+            const output = encodeURIComponent(input);
+            document.getElementById('url-output').value = output;
+        }
+
+        function decodeURL() {
+            const input = document.getElementById('url-input').value;
+            const output = decodeURIComponent(input);
+            document.getElementById('url-output').value = output;
+        }
+
+        // Open HTML/CSS Cheat Sheet in New Tab
+        function openCheatSheet() {
+            window.open('https://acchou.github.io/html-css-cheat-sheet/html-css-cheat-sheet.html', '_blank');
+        }
+    </script>
+</body>
+</html>
