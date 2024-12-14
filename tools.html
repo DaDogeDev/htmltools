@@ -9,26 +9,39 @@
             font-family: Arial, sans-serif;
             margin: 20px;
         }
-       .tool {
+        .tool {
             margin-bottom: 30px;
         }
-       .tool h2 {
+        .tool h2 {
             margin-bottom: 10px;
         }
-       .tool input,.tool textarea,.tool select {
+        .tool input,.tool textarea,.tool select {
             display: block;
             margin: 10px 0;
             padding: 5px;
             width: 100%;
             max-width: 300px;
         }
-       .tool button {
+        .tool button {
             padding: 5px 10px;
         }
-       .file-info {
-            margin-top: 10px;
+        .color-preview {
+            height: 50px;
+            width: 50px;
             border: 1px solid #000;
-            padding: 10px;
+            margin-top: 10px;
+        }
+        .image-preview {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #000;
+            margin-top: 10px;
+        }
+        .audio-preview,
+        .video-preview {
+            max-width: 100%;
+            height: auto;
+            margin-top: 10px;
         }
     </style>
 </head>
@@ -52,15 +65,11 @@
         <div class="color-preview" id="color-preview"></div>
     </div>
 
-    <!-- Any File Uploader -->
+    <!-- Universal File Uploader -->
     <div class="tool" id="file-uploader">
-        <h2>File Uploader</h2>
-        <input type="file" id="file-input" onchange="handleFileUpload(event)" />
-        <div id="file-info" class="file-info" hidden>
-            <p><strong>File Name:</strong> <span id="file-name"></span></p>
-            <p><strong>File Size:</strong> <span id="file-size"></span> bytes</p>
-            <p><strong>File Type:</strong> <span id="file-type"></span></p>
-        </div>
+        <h2>Universal File Uploader</h2>
+        <input type="file" id="file-input" onchange="previewFile(event)" />
+        <div id="file-preview"></div>
     </div>
 
     <!-- Base64 Encoder/Decoder -->
@@ -134,14 +143,39 @@
             colorPreview.style.backgroundColor = color;
         }
 
-        // File Uploader Function
-        function handleFileUpload(event) {
+        // Universal File Uploader Function
+        function previewFile(event) {
             const file = event.target.files[0];
+            const filePreview = document.getElementById('file-preview');
+            const reader = new FileReader();
+
+            filePreview.innerHTML = ""; // Clear previous preview
+
             if (file) {
-                document.getElementById('file-info').hidden = false;
-                document.getElementById('file-name').textContent = file.name;
-                document.getElementById('file-size').textContent = file.size;
-                document.getElementById('file-type').textContent = file.type || 'Unknown';
+                const fileType = file.type.split("/")[0]; // Get the type (image, video, audio, etc.)
+                reader.onload = function(e) {
+                    if (fileType === "image") {
+                        const img = document.createElement("img");
+                        img.src = e.target.result;
+                        img.classList.add("image-preview");
+                        filePreview.appendChild(img);
+                    } else if (fileType === "audio") {
+                        const audio = document.createElement("audio");
+                        audio.controls = true;
+                        audio.src = e.target.result;
+                        audio.classList.add("audio-preview");
+                        filePreview.appendChild(audio);
+                    } else if (fileType === "video") {
+                        const video = document.createElement("video");
+                        video.controls = true;
+                        video.src = e.target.result;
+                        video.classList.add("video-preview");
+                        filePreview.appendChild(video);
+                    } else {
+                        filePreview.innerHTML = "Unsupported file type for preview.";
+                    }
+                };
+                reader.readAsDataURL(file);
             }
         }
 
